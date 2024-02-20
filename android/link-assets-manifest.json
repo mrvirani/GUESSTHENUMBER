@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/BreeSerif-Regular.ttf",
+      "sha1": "f19ca8ca7c6f79883f331cf66f4a7d4bc5651a42"
+    },
+    {
+      "path": "assets/fonts/Lato-Bold.ttf",
+      "sha1": "542498221d97bee5bdbccf86ee8890bf8e8005c9"
+    },
+    {
+      "path": "assets/fonts/NotoSerif-VariableFont_wdth,wght.ttf",
+      "sha1": "7e73a5116d127fa32d9f2bea5025a07f92921f75"
+    },
+    {
+      "path": "assets/fonts/OpenSans-Bold.ttf",
+      "sha1": "0ad533c702f9ac1de717063040426858662cfbcc"
+    },
+    {
+      "path": "assets/fonts/OpenSans-Regular.ttf",
+      "sha1": "dc9c07303a2392f9ee02fdb636814970753ac94a"
+    },
+    {
+      "path": "assets/fonts/RobotoSlab-VariableFont_wght.ttf",
+      "sha1": "607b11807d40548c02c58df35567675ef3dfd2eb"
+    }
+  ]
+}
