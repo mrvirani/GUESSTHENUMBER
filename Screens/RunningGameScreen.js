@@ -5,7 +5,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 
-import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native';
+import { Alert, Button, Dimensions, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native';
 import Card from '../components.js/Card';
 import MainButton from '../components.js/MainButton';
 import Icons from 'react-native-vector-icons/MaterialIcons'
@@ -24,8 +24,8 @@ const generateRandomBetween = (min, max, exclude) => {
   }
 }
 
-const renderListItem = (value,numberOfRound)=>(
-  (<View key={value} style={styles.ResultListNumber}><Text>#{numberOfRound}</Text><Text>{ value}</Text></View>)
+const renderListItem = (value, numberOfRound) => (
+  (<View key={value} style={styles.ResultListNumber}><Text>#{numberOfRound}</Text><Text>{value}</Text></View>)
 )
 
 
@@ -35,6 +35,9 @@ const RunningGameScreen = props => {
   const [currentGuess, setCurrentGuess] = useState(initialGuess)
 
   const [pastGuesses, setPastGuess] = useState([initialGuess])
+
+  const [availableDeviceWidth,setAvailableDeviceWidth] = useState(Dimensions.get('window').width)
+  const [availableDeviceHeight,setAvailableDeviceHeight] = useState(Dimensions.get('window').height)
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
 
@@ -43,6 +46,26 @@ const RunningGameScreen = props => {
   // }
 
   const { userChoice, onGameOver } = props
+
+
+  const updateLayout=()=>{
+    setAvailableDeviceWidth(Dimensions.get('window').width)
+    setAvailableDeviceHeight(Dimensions.get('window').height)
+}
+  useEffect(()=>{
+
+    Dimensions.addEventListener('change',updateLayout)
+
+    return ()=>{
+
+      const removeEventListener = ()=>{
+        Dimensions.removeEventListener('change',updateLayout)
+      }
+
+      return removeEventListener
+    }
+  })
+
 
   useEffect(() => {    //useEffect take a function and this function by default runs after every render cycle for this componenets
 
@@ -79,43 +102,110 @@ const RunningGameScreen = props => {
     setPastGuess(curPastGuesses => [nextNumber, ...curPastGuesses])
   }
 
+  let listContainerStyle = styles.listContainer
+  
+  if(availableDeviceWidth<350){
+    listContainerStyle = styles.listContainerBig
+  }
+
+  if(availableDeviceHeight<500){
+
+    return (
+      <ScrollView>
+  
+        <View style={styles.Screen}>
+          <Text>2nd Screen</Text>
+          <Text>Oponenet's Guess</Text>
+
+          <View style={styles.btnContainer}>
+          <View style={styles.lowerBtn}>
+              <MainButton onPress={nextGuessHandler.bind(this, 'lower')} style={{ flexDirection: 'row' }}>
+                {/* <Text>Lower Number</Text> */}
+                <Text>
+                  <Icons name='remove' size={20} />
+                </Text>
+              </MainButton>
+            </View>
+
+          <BodyText> {currentGuess} </BodyText>
+         
+            <View style={styles.GraterBtn}>
+              <MainButton onPress={(nextGuessHandler.bind(this, 'grater'))} style={{ flexDirection: 'row' }}>
+                {/* <Text>Grater Number</Text> */}
+                <Text>
+                  <Icons name='add' size={20} />
+                </Text>
+              </MainButton>
+            </View>
+
+          </View>
+          
+            
+  
+  
+  
+  
+  
+          <View style={styles.listContainer}>
+  
+            <ScrollView contentContainerStyle='styles.list'>
+              {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+            </ScrollView>
+  
+          </View>
+  
+  
+        </View>
+  
+      </ScrollView>
+  
+    );
+    
+  }
+
+
   return (
-    <View style={styles.Screen}>
-      <Text>2nd Screen</Text>
-      <Text>Oponenet's Guess</Text>
-      <BodyText> {currentGuess} </BodyText>
-      <Card style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <View style={styles.lowerBtn}>
-          <MainButton onPress={nextGuessHandler.bind(this, 'lower')} style={{ flexDirection: 'row' }}>
-            {/* <Text>Lower Number</Text> */}
-            <Text>
-              <Icons name='remove' size={20} />
-            </Text>
-          </MainButton>
+    <ScrollView>
+
+      <View style={styles.Screen}>
+        <Text>2nd Screen</Text>
+        <Text>Oponenet's Guess</Text>
+        <BodyText> {currentGuess} </BodyText>
+        <Card style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={styles.lowerBtn}>
+            <MainButton onPress={nextGuessHandler.bind(this, 'lower')} style={{ flexDirection: 'row' }}>
+              {/* <Text>Lower Number</Text> */}
+              <Text>
+                <Icons name='remove' size={20} />
+              </Text>
+            </MainButton>
+          </View>
+          <View style={styles.GraterBtn}>
+            <MainButton onPress={(nextGuessHandler.bind(this, 'grater'))} style={{ flexDirection: 'row' }}>
+              {/* <Text>Grater Number</Text> */}
+              <Text>
+                <Icons name='add' size={20} />
+              </Text>
+            </MainButton>
+          </View>
+
+
+
+        </Card>
+
+        <View style={styles.listContainer}>
+
+          <ScrollView contentContainerStyle='styles.list'>
+            {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+          </ScrollView>
+
         </View>
-        <View style={styles.GraterBtn}>
-          <MainButton onPress={(nextGuessHandler.bind(this, 'grater'))} style={{ flexDirection: 'row' }}>
-            {/* <Text>Grater Number</Text> */}
-            <Text>
-              <Icons name='add' size={20} />
-            </Text>
-          </MainButton>
-        </View>
 
-
-
-      </Card>
-
-      <View style={styles.listContainer}>
-        
-        <ScrollView contentContainerStyle='styles.list'>
-          {pastGuesses.map((guess,index) => renderListItem(guess,pastGuesses.length-index))}
-        </ScrollView>
 
       </View>
 
+    </ScrollView>
 
-    </View>
   );
 }
 
@@ -147,20 +237,28 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 10,
     flexDirection: 'row',
-    justifyContent:'space-between',
+    justifyContent: 'space-between',
   },
 
-  listContainer:{
-    width:'80%',
+  listContainer: {
+    width: '80%',
+    flex: 1,
+    marginTop: 10
+  },
+
+  list: {
+    justifyContent: 'flex-end',
+    flexGrow: 1,
+    alignItems: 'center',
+    color: 'black'
+  },
+
+  btnContainer:{
     flex:1,
-    marginTop:10
-  },
-
-  list:{
-    justifyContent:'flex-end',
-    flexGrow:1,
+    width:'80%',
+    flexDirection:'row',
     alignItems:'center',
-    color:'black'
+    justifyContent:'space-between'
   }
 
 })
